@@ -5,7 +5,7 @@ from .models import Category, Product, Review
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = 'name'.split()
+        fields = 'name products_count'.split()
 
 
 class CategoryDetailSerializer(serializers.ModelSerializer):
@@ -36,3 +36,18 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = 'id text product'.split()
+        
+
+class ProductReviewsSerializer(serializers.ModelSerializer):
+    reviews = ReviewDetailSerializer(many=True)
+    average_rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = ' title reviews average_rating'.split()
+
+    def get_average_rating(self, obj):
+        reviews = obj.reviews.all()
+        if reviews:
+            return sum(review.stars for review in reviews) / len(reviews)
+        return None

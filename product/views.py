@@ -2,7 +2,7 @@ from unicodedata import category
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import CategorySerializer, ProductSerializer, ReviewSerializer, CategoryDetailSerializer, ProductDetailSerializer, ReviewDetailSerializer
+from .serializers import CategorySerializer, ProductSerializer, ReviewSerializer, CategoryDetailSerializer, ProductDetailSerializer, ReviewDetailSerializer, ProductReviewsSerializer
 
 import product
 from .models import Category, Product, Review
@@ -62,3 +62,22 @@ def review_detail_api_view(request, id):
     list_ = ReviewDetailSerializer(reviews).data
     
     return Response(data=list_, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def product_review_api_view(request):
+    
+    reviews = Review.objects.all()
+    
+    list_ = ProductDetailSerializer(reviews, many=True).data
+    
+    return Response(data=list_, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def product_reviews_list_api_view(request):
+    
+    products = Product.objects.prefetch_related('reviews').all()
+    
+    serializer = ProductReviewsSerializer(products, many=True).data
+    
+    return Response(data=serializer, status=status.HTTP_200_OK)
