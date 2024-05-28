@@ -1,4 +1,7 @@
 from dataclasses import fields
+from importlib.metadata import requires
+from unicodedata import category
+from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
 from .models import Category, Product, Review
 
@@ -51,3 +54,41 @@ class ProductReviewsSerializer(serializers.ModelSerializer):
         if reviews:
             return sum(review.stars for review in reviews) / len(reviews)
         return None
+    
+
+class CategoryValidateSerializer(serializers.Serializer):
+    name = serializers.CharField(min_length=5)
+    
+       
+class ProductValidateSerializer(serializers.Serializer):
+    title = serializers.CharField(min_length=5)
+    description = serializers.CharField(required=False)
+    price = serializers.FloatField()
+    category_id = serializers.IntegerField()
+    
+    
+    def validate_category_id(self, category_id):
+        
+        try:
+            Category.objects.get(id=category_id)
+            
+        except:
+            raise ValidationError('There is no such category')
+        
+        return category_id
+    
+    
+class ReviewValidateSerializer(serializers.Serializer):
+    text = serializers.CharField(required=False)
+    product_id = serializers.IntegerField()
+    stars = serializers.IntegerField(min_value=1, max_value=5)
+    
+    def validate_product_id(self, product_id):
+        
+        try:
+            Product.objects.get(id=product_id)
+        
+        except:
+            raise ValidationError('Sorry for such a product')
+        
+        return product_id
