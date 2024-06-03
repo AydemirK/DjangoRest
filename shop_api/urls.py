@@ -17,19 +17,39 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from product import views
+from rest_framework.routers import DefaultRouter
+from product.views import ProductModelViewSet, CategoryModelViewSet, ReviewModelViewSet, ProductDetailAPIView, \
+                          CategoryDetailAPIView, ReviewDetailAPIView, ProductReviewsListAPIView
 
+
+
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('api/v1/categories/', views.category_list_api_view),
+#     path('api/v1/categories/<int:id>/', views.category_detail_api_view),
+    
+#     path('api/v1/products/', views.product_list_api_view),
+#     path('api/v1/products/<int:id>/', views.product_detail_api_view),
+#     path('api/v1/products/reviews/', views.product_reviews_list_api_view),
+    
+#     path('api/v1/reviews/', views.review_list_api_view),
+#     path('api/v1/reviews/<int:id>/', views.review_detail_api_view),
+    
+#     path('api/v1/users/', include('users.urls'))
+# ]
+
+
+router = DefaultRouter()
+router.register(r'products', ProductModelViewSet, basename='product')
+router.register(r'categories', CategoryModelViewSet, basename='category')
+router.register(r'reviews', ReviewModelViewSet, basename='review')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/categories/', views.category_list_api_view),
-    path('api/v1/categories/<int:id>/', views.category_detail_api_view),
-    
-    path('api/v1/products/', views.product_list_api_view),
-    path('api/v1/products/<int:id>/', views.product_detail_api_view),
-    path('api/v1/products/reviews/', views.product_reviews_list_api_view),
-    
-    path('api/v1/reviews/', views.review_list_api_view),
-    path('api/v1/reviews/<int:id>/', views.review_detail_api_view),
-    
-    path('api/v1/users/', include('users.urls'))
+    path('api/v1/', include(router.urls)),
+    path('api/v1/products/<int:id>/', ProductDetailAPIView.as_view(), name='product-detail'),
+    path('api/v1/categories/<int:id>/', CategoryDetailAPIView.as_view(), name='category-detail'),
+    path('api/v1/products/reviews/', ProductReviewsListAPIView.as_view(), name='product-reviews-list'),
+    path('api/v1/reviews/<int:id>/', ReviewDetailAPIView.as_view(), name='review-detail'),
+    path('api/v1/users/', include('users.urls')),
 ]
