@@ -30,6 +30,7 @@ class RegistrationAPIView(APIView):
         return Response(data={'user_id': user.id}, status=status.HTTP_201_CREATED)
 
 
+
 # @api_view(['POST'])
 # def registration_api_view(request):
     

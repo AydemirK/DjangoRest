@@ -20,6 +20,8 @@ from product import views
 from rest_framework.routers import DefaultRouter
 from product.views import ProductModelViewSet, CategoryModelViewSet, ReviewModelViewSet, ProductDetailAPIView, \
                           CategoryDetailAPIView, ReviewDetailAPIView, ProductReviewsListAPIView
+                          
+from . import swagger
 
 
 
@@ -53,3 +55,5 @@ urlpatterns = [
     path('api/v1/reviews/<int:id>/', ReviewDetailAPIView.as_view(), name='review-detail'),
     path('api/v1/users/', include('users.urls')),
 ]
+
+urlpatterns += swagger.urlpatterns
