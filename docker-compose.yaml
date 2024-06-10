@@ -1,0 +1,23 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: .
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8001:8000"
+    depends_on:
+      - shopdb
+  shopdb:
+    image: "postgres:12"
+    hostname: shopdb
+    environment:
+      - POSTGRES_DB=shopdb
+      - POSTGRES_USER=shop_user
+      - POSTGRES_PASSWORD=321
+    ports:
+      - "5436:5432"
+    volumes:
+      - shopdb-postgres:/var/lib/postgeresql/data
+volumes:
+  shopdb-postgres:
